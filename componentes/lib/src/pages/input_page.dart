@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class InputPage extends StatefulWidget {
   @override
@@ -10,6 +11,8 @@ class _InputPageState extends State<InputPage> {
   String _nombre = '';
   String _email = '';
   String _fecha = '';
+  String _opcionSeleccionada = 'Volar';
+  List<String> _poderes = ['Volar', 'Rayos X', 'Super Aliento', 'Super Fuerza'];
 
   TextEditingController _inputFieldDateController = new TextEditingController();
 
@@ -29,6 +32,8 @@ class _InputPageState extends State<InputPage> {
           _crearPassword(),
           Divider(),
           _crearFecha(context),
+          Divider(),
+          _crearDropdown(),
           Divider(),
           _crearPersona()
         ],
@@ -91,11 +96,6 @@ class _InputPageState extends State<InputPage> {
         suffixIcon: Icon(Icons.lock_open),
         icon: Icon(Icons.lock)
       ),
-      onChanged: (valor) {
-        setState(() {
-          _email = valor;
-        });
-      },
     );
   }
 
@@ -130,15 +130,58 @@ class _InputPageState extends State<InputPage> {
     if(picked != null ) {
       setState(() {
         _fecha = picked.toString();
+        _fecha = convertDateTimeDisplay(_fecha);
         _inputFieldDateController.text = _fecha;
       });
     }
+  }
+
+  String convertDateTimeDisplay(String date) {
+    DateFormat displayFormater = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+    DateFormat serverFormater = DateFormat('dd-MM-yyyy');
+    DateTime displayDate = displayFormater.parse(date);
+    String formatted = serverFormater.format(displayDate);
+    return formatted;
+  }
+
+  List<DropdownMenuItem<String>> getOpcionesDropdown() {
+    List<DropdownMenuItem<String>> lista = new List();
+    
+    _poderes.forEach((poder) {
+      lista.add(DropdownMenuItem(
+        child: Text(poder),
+        value: poder,
+      ));
+    });
+    return lista;
+  }
+
+  Widget _crearDropdown() {
+    return Row(
+      children: <Widget>[
+        Icon(Icons.select_all),
+        SizedBox(width: 30.0,),
+        Expanded(
+          child: DropdownButton(
+            value: _opcionSeleccionada,
+            items: getOpcionesDropdown(),
+            onChanged: (opt) {
+              setState(() {
+                _opcionSeleccionada = opt;
+              });
+            }
+          )
+        )
+        
+      ],
+    );
   }
 
   Widget _crearPersona() {
     return ListTile(
       title: Text('Nombre es: $_nombre'),
       subtitle: Text('Email: $_email'),
+      trailing: Text(_opcionSeleccionada),
     );
   }
 }
