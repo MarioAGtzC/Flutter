@@ -14,6 +14,7 @@ class Peliculas {
 }
 
 class Pelicula {
+  String uniqueId;
   double popularity;
   int voteCount;
   bool video;
@@ -68,6 +69,14 @@ class Pelicula {
       return 'https://i5.walmartimages.com/asr/a639a2af-cc93-4802-836d-372272731452_1.c7233452b7b19b699ef96944c8cbbe74.jpeg';
     } else {
       return 'https://image.tmdb.org/t/p/w500/$posterPath';
+    }
+  }
+
+  getBackgroundImg() {
+    if(posterPath == null) {
+      return 'https://i5.walmartimages.com/asr/a639a2af-cc93-4802-836d-372272731452_1.c7233452b7b19b699ef96944c8cbbe74.jpeg';
+    } else {
+      return 'https://image.tmdb.org/t/p/w500/$backdropPath';
     }
   }
 }
