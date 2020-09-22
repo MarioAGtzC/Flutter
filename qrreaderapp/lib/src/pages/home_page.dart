@@ -50,20 +50,17 @@ class _HomePageState extends State<HomePage> {
     //https://marioagtzc.github.io/Resume/
     //geo:19.25422851599384,-103.70694294413455
 
-    dynamic futureString = 'https://marioagtzc.github.io/Resume/';
+    dynamic futureString;
 
-    // try{
-    //   futureString = await BarcodeScanner.scan();
-    // }catch(e) {
-    //   futureString = e.toString();
-    // }
+    try{
+      futureString = await BarcodeScanner.scan();
+    }catch(e) {
+      futureString = e.toString();
+    }
 
-    if(futureString != null) {
-      final scan = ScanModel(valor: futureString);
+    if(futureString.rawContent != null && futureString.rawContent != '') {
+      final scan = ScanModel(valor: futureString.rawContent);
       scansBloc.agregarScans(scan);
-
-      final scan2 = ScanModel(valor: 'geo:19.25422851599384,-103.70694294413455');
-      scansBloc.agregarScans(scan2);
 
       if(Platform.isIOS) {
         Future.delayed(Duration(milliseconds: 750), () {
@@ -72,7 +69,6 @@ class _HomePageState extends State<HomePage> {
       } else {
         utils.abrirScan(context, scan);
       }
-
     }
   }
 

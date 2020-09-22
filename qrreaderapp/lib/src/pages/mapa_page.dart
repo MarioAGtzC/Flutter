@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:qrreaderapp/src/models/scan_model.dart';
 
-class MapaPage extends StatelessWidget {
+class MapaPage extends StatefulWidget {
+  @override
+  _MapaPageState createState() => _MapaPageState();
+}
+
+class _MapaPageState extends State<MapaPage> {
   final map = new MapController();
+
+  String tipoMapa = 'streets';
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +29,36 @@ class MapaPage extends StatelessWidget {
         ],
       ),
       body: _crearFlutterMap(scan),
+      floatingActionButton: _crearBotonFlotante(context, scan),
+    );
+  }
+
+  Widget _crearBotonFlotante(BuildContext context, ScanModel scan) {
+    return FloatingActionButton(
+      child: Icon(Icons.repeat),
+      backgroundColor: Theme.of(context).primaryColor,
+      onPressed: () {
+        if(tipoMapa == 'streets') {
+          tipoMapa = 'dark';
+        } else if(tipoMapa == 'dark') {
+          tipoMapa = 'light';
+        } else if(tipoMapa == 'light') {
+          tipoMapa = 'outdoors';
+        } else if(tipoMapa == 'outdoors') {
+          tipoMapa = 'satellite-streets';
+        } else {
+          tipoMapa = 'streets';
+        }
+        
+        map.move(scan.getLatLng(), 30);
+ 
+        //Regreso al Zoom Deseado después de unos Milisegundos
+        Future.delayed(Duration(milliseconds: 50),(){
+          map.move(scan.getLatLng(), 15);
+        });
+        setState(() {});
+        //streets-v10, dark-v10, light-v10, outdoors-v10, satellite-streets-v10
+      }
     );
   }
 
@@ -44,7 +81,7 @@ class MapaPage extends StatelessWidget {
       urlTemplate:'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
       additionalOptions: {
         'accessToken':'pk.eyJ1IjoiZ3JlZW5pZWd0eiIsImEiOiJja2ZjdmJmYWcwMTluMnJxcXptMTYxeHhrIn0.33v7b4ClPV_o8M0kVqZZAA',
-        'id': 'mapbox/dark-v10'
+        'id': 'mapbox/$tipoMapa-v10'
         //streets-v10, dark-v10, light-v10, outdoors-v10, satellite-streets-v10
       }
     );
@@ -60,7 +97,7 @@ class MapaPage extends StatelessWidget {
           builder: (context) => Container(
             child: Icon(
               Icons.location_on,
-              size: 70.0,
+              size: 45.0,
               color: Theme.of(context).primaryColor,
             ),
           )
